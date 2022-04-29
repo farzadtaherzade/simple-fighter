@@ -16,8 +16,24 @@ const healCount = ref(3);
 const resetGame = ref(false);
 const ready = ref(false);
 
+const disabled = ref(false);
+const healthDisabled = ref(false);
+
+function showAttackDetail() {
+  disabled.value = true;
+  setTimeout(() => {
+    disabled.value = false;
+  }, 300);
+}
+function showHealtDetail() {
+  healthDisabled.value = true;
+  setTimeout(() => {
+    healthDisabled.value = false;
+  }, 300);
+}
+
 function atack() {
-  // enemy damage
+  showAttackDetail();
 
   playerAtack.value =
     basePlayerAtack[Math.floor(Math.random() * basePlayerAtack.length)];
@@ -48,7 +64,7 @@ function heal_player() {
   if (store.playerHealth + heal <= 100) {
     if (healCount.value > 0) {
       healCount.value = healCount.value - 1;
-
+      showHealtDetail();
       store.playerHealth = store.playerHealth + heal;
       console.log();
     }
@@ -116,10 +132,19 @@ function reset_game() {
     <div class="warrior">
       <div class="player-warrior">
         <img src="../assets/ZeQb.gif" alt="" />
+        <transition name="fade">
+          <span v-if="disabled">-{{ playerAtack }}</span>
+        </transition>
+        <transition name="fade">
+          <span v-if="healthDisabled" class="hp">+{{ heal }}</span>
+        </transition>
       </div>
 
       <div class="enemy-warrior">
         <img src="../assets/Gpm.gif" alt="" />
+        <transition name="fade">
+          <span v-if="disabled">-{{ enemyAtack }}</span>
+        </transition>
       </div>
     </div>
 
@@ -239,11 +264,70 @@ function reset_game() {
     align-items: center;
     margin-top: 40px;
     .player-warrior {
+      span {
+        position: absolute;
+        color: #df4759;
+        font-size: 23px;
+        right: -20px;
+        top: 18px;
+        &.hp {
+          color: #449444;
+        }
+      }
+      .fade-enter-from {
+        opacity: 0;
+      }
+      .fade-enter-to {
+        font-size: 70px;
+        opacity: 1;
+      }
+      .fade-enter-active {
+        transition: all 1s ease;
+      }
+      .fade-leave-from {
+        font-size: 45px;
+        opacity: 1;
+      }
+      .fade-leave-to {
+        opacity: 0;
+      }
+      .fade-leave-active {
+        transition: all 1s ease;
+      }
       img {
         width: 250px;
       }
     }
     .enemy-warrior {
+      span {
+        position: absolute;
+        color: #df4759;
+        font-size: 23px;
+        left: -20px;
+        top: 0;
+        &.show {
+        }
+      }
+      .fade-enter-from {
+        opacity: 0;
+      }
+      .fade-enter-to {
+        font-size: 70px;
+        opacity: 1;
+      }
+      .fade-enter-active {
+        transition: all 1s ease;
+      }
+      .fade-leave-from {
+        font-size: 45px;
+        opacity: 1;
+      }
+      .fade-leave-to {
+        opacity: 0;
+      }
+      .fade-leave-active {
+        transition: all 1s ease;
+      }
       img {
         width: 250px;
         transform: scaleX(-1);
@@ -324,7 +408,7 @@ function reset_game() {
       font-size: 20px;
       font-weight: 100;
       cursor: pointer;
-      transition: .3s;
+      transition: 0.3s;
       &:hover {
         background-color: #66a7d8;
       }
